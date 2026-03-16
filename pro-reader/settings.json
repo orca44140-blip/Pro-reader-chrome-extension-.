@@ -1,0 +1,500 @@
+{
+  "version": "2.1",
+  "lastUpdated": "2026-02-22",
+  "description": "Advanced Pro Text Reader - Complete Settings Configuration",
+  "tabs": {
+    "voice": {
+      "name": "🎤 Voice",
+      "description": "Speech synthesis and voice configuration",
+      "settings": {
+        "voice": {
+          "type": "select",
+          "label": "Select Voice",
+          "description": "Choose from available voices",
+          "default": null,
+          "category": "speech",
+          "icon": "🎤",
+          "options": "dynamic_from_browser",
+          "note": "📥 = Offline (no external API) | ☁️ = Online | ★★★ = Best quality"
+        },
+        "speed": {
+          "type": "select",
+          "label": "Speech Speed",
+          "description": "Control playback speed",
+          "default": 1,
+          "category": "playback",
+          "icon": "⚡",
+          "options": [
+            { "value": 0.25, "label": "0.25x (Very Slow)" },
+            { "value": 0.5, "label": "0.5x (Slow)" },
+            { "value": 0.75, "label": "0.75x" },
+            { "value": 1, "label": "1x (Normal)" },
+            { "value": 1.25, "label": "1.25x" },
+            { "value": 1.5, "label": "1.5x (Fast)" },
+            { "value": 1.75, "label": "1.75x" },
+            { "value": 2, "label": "2x (Very Fast)" },
+            { "value": 2.25, "label": "2.25x (Fastest)" }
+          ]
+        },
+        "pitch": {
+          "type": "select",
+          "label": "Voice Pitch",
+          "description": "Adjust voice pitch level",
+          "default": 1,
+          "category": "audio",
+          "icon": "🎵",
+          "options": [
+            { "value": 0.5, "label": "🔻 Very Low" },
+            { "value": 0.75, "label": "🔉 Low" },
+            { "value": 1, "label": "⏸ Normal" },
+            { "value": 1.25, "label": "🔊 High" },
+            { "value": 1.5, "label": "🔺 Very High" }
+          ]
+        },
+        "volume": {
+          "type": "range",
+          "label": "Volume",
+          "description": "Control speaker volume",
+          "default": 1,
+          "category": "audio",
+          "icon": "🔊",
+          "min": 0,
+          "max": 1,
+          "step": 0.05,
+          "unit": "%"
+        }
+      }
+    },
+    "reading": {
+      "name": "📖 Reading",
+      "description": "Reading behavior and playback options",
+      "settings": {
+        "sentenceCount": {
+          "type": "select",
+          "label": "Sentences per chunk",
+          "description": "Number of sentences to read per pause",
+          "default": 2,
+          "category": "chunking",
+          "icon": "📝",
+          "options": [
+            { "value": 1, "label": "1 sentence (slower, natural pauses)" },
+            { "value": 2, "label": "2 sentences (balanced)" },
+            { "value": 3, "label": "3 sentences" },
+            { "value": 4, "label": "4 sentences (faster)" }
+          ]
+        },
+        "repeatCount": {
+          "type": "select",
+          "label": "Repeat sentences",
+          "description": "Number of times to repeat each sentence",
+          "default": 1,
+          "category": "repetition",
+          "icon": "🔁",
+          "useFor": "Learning and memorization",
+          "options": [
+            { "value": 1, "label": "1x (no repeat)" },
+            { "value": 2, "label": "2x (better retention)" },
+            { "value": 3, "label": "3x" },
+            { "value": 4, "label": "4x" },
+            { "value": 5, "label": "5x" }
+          ]
+        },
+        "selectionRepeatCount": {
+          "type": "select",
+          "label": "Repeat selected text",
+          "description": "How many times to repeat selected text",
+          "default": 1,
+          "category": "repetition",
+          "icon": "♾️",
+          "options": [
+            { "value": 1, "label": "1x" },
+            { "value": 2, "label": "2x" },
+            { "value": 3, "label": "3x" },
+            { "value": 5, "label": "5x" },
+            { "value": "unlimited", "label": "♾️ Forever" }
+          ]
+        },
+        "autoScroll": {
+          "type": "checkbox",
+          "label": "Auto-scroll to current word",
+          "description": "Automatically scroll page to keep current word visible",
+          "default": true,
+          "category": "ui",
+          "icon": "📜"
+        },
+        "autoScrollDelay": {
+          "type": "number",
+          "label": "Auto-scroll delay (ms)",
+          "description": "Minimum delay between scroll events",
+          "default": 4000,
+          "category": "ui",
+          "icon": "⏱️",
+          "min": 100,
+          "max": 10000,
+          "step": 100,
+          "unit": "milliseconds"
+        },
+        "showVocab": {
+          "type": "checkbox",
+          "label": "Show word definitions",
+          "description": "Display definitions for current word",
+          "default": true,
+          "category": "learning",
+          "icon": "📚"
+        },
+        "loopIntensity": {
+          "type": "select",
+          "label": "Loop Intensity",
+          "description": "Controls pause duration between repeats",
+          "default": "normal",
+          "category": "advanced_repetition",
+          "icon": "🎯",
+          "options": [
+            { "value": "gentle", "label": "🐌 Gentle (3s pause)" },
+            { "value": "normal", "label": "⏱️ Normal (auto delay)" },
+            { "value": "intense", "label": "⚡ Intense (no pause)" }
+          ]
+        },
+        "loopDelay": {
+          "type": "range",
+          "label": "Custom delay between repeats",
+          "description": "Fine-tune pause duration between loops",
+          "default": 0,
+          "category": "advanced_repetition",
+          "icon": "⏳",
+          "min": 0,
+          "max": 10000,
+          "step": 500,
+          "unit": "milliseconds"
+        },
+        "loopFadeToggle": {
+          "type": "checkbox",
+          "label": "Fade effect between repeats",
+          "description": "Apply smooth visual transition between repeats",
+          "default": false,
+          "category": "advanced_repetition",
+          "icon": "✨"
+        },
+        "infiniteLoop": {
+          "type": "checkbox",
+          "label": "Infinite loop",
+          "description": "Keep looping after repeat count is reached",
+          "default": false,
+          "category": "advanced_repetition",
+          "icon": "♾️"
+        }
+      }
+    },
+    "highlight": {
+      "name": "✨ Highlight",
+      "description": "Word highlighting and visual formatting",
+      "settings": {
+        "highlightColor": {
+          "type": "color",
+          "label": "Highlight color",
+          "description": "Color for word highlighting",
+          "default": "#00ff00",
+          "category": "visual",
+          "icon": "🎨",
+          "presets": [
+            { "value": "#00ff00", "label": "Neon Green" },
+            { "value": "#ffff00", "label": "Bright Yellow" },
+            { "value": "#ff00ff", "label": "Magenta" },
+            { "value": "#00ffff", "label": "Cyan" },
+            { "value": "#ff6600", "label": "Orange" },
+            { "value": "#ff3333", "label": "Red" }
+          ]
+        },
+        "highlightStyle": {
+          "type": "select",
+          "label": "Highlight style",
+          "description": "How words are highlighted",
+          "default": "background",
+          "category": "visual",
+          "icon": "✨",
+          "options": [
+            { "value": "background", "label": "Background color" },
+            { "value": "text-color-only", "label": "Text color only (bold)" },
+            { "value": "text-color-minimal", "label": "Text color + minimal box" },
+            { "value": "text-shadow", "label": "Text shadow effect" },
+            { "value": "text-bold-dark", "label": "Bold + dark background" },
+            { "value": "outline", "label": "Outline/Border" },
+            { "value": "underline", "label": "Underline" },
+            { "value": "wave-underline", "label": "Wave underline" },
+            { "value": "box-shadow-only", "label": "Box shadow only" },
+            { "value": "gradient-text", "label": "Gradient text color" },
+            { "value": "glow", "label": "Glow effect" },
+            { "value": "pulse", "label": "Pulse animation" },
+            { "value": "scale", "label": "Scale animation" }
+          ]
+        },
+        "highlightOpacity": {
+          "type": "range",
+          "label": "Highlight opacity",
+          "description": "Transparency level of highlight",
+          "default": 1,
+          "category": "visual",
+          "icon": "💫",
+          "min": 0.3,
+          "max": 1,
+          "step": 0.1,
+          "unit": "%"
+        },
+        "syncHighlight": {
+          "type": "checkbox",
+          "label": "Sync highlighting with speech",
+          "description": "Highlight words as they are spoken",
+          "default": true,
+          "category": "behavior",
+          "icon": "🔄"
+        },
+        "sentenceHighlight": {
+          "type": "checkbox",
+          "label": "Highlight entire sentences",
+          "description": "Dim the entire sentence while reading",
+          "default": false,
+          "category": "behavior",
+          "icon": "📄"
+        }
+      }
+    },
+    "advanced": {
+      "name": "⚙️ Advanced",
+      "description": "Advanced configuration and system settings",
+      "settings": {
+        "vocabRefreshInterval": {
+          "type": "select",
+          "label": "Word definition refresh",
+          "description": "How often to update word definitions",
+          "default": 3000,
+          "category": "performance",
+          "icon": "🔄",
+          "options": [
+            { "value": 1000, "label": "1 second" },
+            { "value": 2000, "label": "2 seconds" },
+            { "value": 3000, "label": "3 seconds (default)" },
+            { "value": 5000, "label": "5 seconds" },
+            { "value": 10000, "label": "10 seconds" }
+          ]
+        },
+        "voiceFilter": {
+          "type": "select",
+          "label": "Filter voices",
+          "description": "Which voices to display",
+          "default": "all",
+          "category": "voice_selection",
+          "icon": "🎯",
+          "options": [
+            { "value": "all", "label": "All voices" },
+            { "value": "offline", "label": "📥 Offline only" },
+            { "value": "online", "label": "☁️ Online only" },
+            { "value": "english", "label": "🇬🇧 English" }
+          ]
+        },
+        "voiceQualityIndicator": {
+          "type": "checkbox",
+          "label": "Show voice quality indicators",
+          "description": "Display quality ratings for voices",
+          "default": false,
+          "category": "ui",
+          "icon": "🏆"
+        },
+        "enableShortcuts": {
+          "type": "checkbox",
+          "label": "Enable keyboard shortcuts",
+          "description": "Allow keyboard shortcut commands",
+          "default": true,
+          "category": "input",
+          "icon": "⌨️"
+        },
+        "darkMode": {
+          "type": "checkbox",
+          "label": "Dark mode",
+          "description": "Enable dark theme",
+          "default": false,
+          "category": "appearance",
+          "icon": "🌙"
+        }
+      }
+    },
+    "tools": {
+      "name": "🛠️ Tools",
+      "description": "Import, export, and utility functions",
+      "settings": {
+        "file_upload": {
+          "type": "action",
+          "label": "Upload files",
+          "description": "Upload TXT, PDF, DOCX, EPUB files",
+          "icon": "📄",
+          "acceptedFormats": [".txt", ".pdf", ".docx", ".epub"]
+        },
+        "clipboard_paste": {
+          "type": "action",
+          "label": "Paste from clipboard",
+          "description": "Paste text from clipboard",
+          "icon": "📋"
+        },
+        "url_import": {
+          "type": "action",
+          "label": "Import from URL",
+          "description": "Import text from a web URL",
+          "icon": "🔗"
+        },
+        "refresh_vocab": {
+          "type": "action",
+          "label": "Refresh definitions",
+          "description": "Refresh all word definitions",
+          "icon": "🔄"
+        }
+      }
+    }
+  },
+  "keyboard_shortcuts": {
+    "space": {
+      "action": "Play / Pause",
+      "description": "Toggle between playing and paused state",
+      "enabled_by": "enableShortcuts"
+    },
+    "escape": {
+      "action": "Stop Reading",
+      "description": "Stop all audio playback",
+      "enabled_by": "enableShortcuts"
+    },
+    "arrow_right": {
+      "action": "Forward 5 seconds",
+      "description": "Skip ahead 5 seconds in playback",
+      "enabled_by": "enableShortcuts"
+    },
+    "arrow_left": {
+      "action": "Rewind 5 seconds",
+      "description": "Go back 5 seconds in playback",
+      "enabled_by": "enableShortcuts"
+    },
+    "ctrl_shift_r": {
+      "action": "Read entire page",
+      "description": "Start reading the entire page",
+      "enabled_by": "enableShortcuts"
+    },
+    "ctrl_shift_s": {
+      "action": "Read selected text",
+      "description": "Read only the selected text",
+      "enabled_by": "enableShortcuts"
+    },
+    "plus": {
+      "action": "Increase speech speed",
+      "description": "Speed up playback",
+      "enabled_by": "enableShortcuts"
+    },
+    "minus": {
+      "action": "Decrease speech speed",
+      "description": "Slow down playback",
+      "enabled_by": "enableShortcuts"
+    },
+    "alt_click": {
+      "action": "Read from cursor position",
+      "description": "Hold Alt and click to start reading from that position",
+      "enabled_by": "enableShortcuts"
+    },
+    "ctrl_shift_click": {
+      "action": "Alternative click-to-speak",
+      "description": "Alternative way to click and read",
+      "enabled_by": "enableShortcuts"
+    }
+  },
+  "feature_flags": {
+    "sentenceHighlight": {
+      "enabled": false,
+      "description": "Highlight entire sentence context"
+    },
+    "autoScroll": {
+      "enabled": true,
+      "description": "Auto-scroll to current word"
+    },
+    "infiniteLoop": {
+      "enabled": false,
+      "description": "Continuous looping mode"
+    },
+    "darkMode": {
+      "enabled": false,
+      "description": "Dark theme support"
+    }
+  },
+  "presets": {
+    "learning_mode": {
+      "name": "Learning Mode",
+      "description": "Optimized for language learning and memorization",
+      "settings": {
+        "speed": 0.75,
+        "repeatCount": 3,
+        "loopIntensity": "gentle",
+        "loopDelay": 3000,
+        "highlightColor": "#ffff00",
+        "highlightStyle": "background",
+        "sentenceHighlight": true,
+        "syncHighlight": true,
+        "showVocab": true
+      }
+    },
+    "professional_mode": {
+      "name": "Professional Mode",
+      "description": "For document and article reading",
+      "settings": {
+        "speed": 1,
+        "repeatCount": 1,
+        "sentenceCount": 2,
+        "highlightColor": "#00ff00",
+        "highlightStyle": "glow",
+        "autoScroll": true,
+        "showVocab": true
+      }
+    },
+    "accessibility_mode": {
+      "name": "Accessibility Mode",
+      "description": "High contrast and easy-to-read settings",
+      "settings": {
+        "speed": 0.75,
+        "volume": 1,
+        "highlightColor": "#ff00ff",
+        "highlightStyle": "outline",
+        "highlightOpacity": 1,
+        "sentenceHighlight": true,
+        "darkMode": true,
+        "enableShortcuts": true
+      }
+    },
+    "performance_mode": {
+      "name": "Performance Mode",
+      "description": "Optimized for speed and efficiency",
+      "settings": {
+        "speed": 1.5,
+        "repeatCount": 1,
+        "sentenceCount": 3,
+        "highlightStyle": "background",
+        "loopIntensity": "intense",
+        "vocabRefreshInterval": 5000
+      }
+    }
+  },
+  "storage": {
+    "location": "localStorage",
+    "key_prefix": "textReaderPro_",
+    "cloud_sync": false,
+    "backup_enabled": true,
+    "backup_interval_days": 7
+  },
+  "performance": {
+    "caching": {
+      "enabled": true,
+      "maxCacheSize": 800,
+      "ttl_seconds": 3600
+    },
+    "debouncing": {
+      "enabled": true,
+      "delay_ms": 300
+    },
+    "throttling": {
+      "enabled": true,
+      "delay_ms": 600
+    }
+  }
+}

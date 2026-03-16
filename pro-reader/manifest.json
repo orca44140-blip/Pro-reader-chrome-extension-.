@@ -1,0 +1,101 @@
+{
+  "manifest_version": 3,
+  "name": "Advanced Text Reader Pro",
+  "version": "2.1.0",
+  "description": "AI-powered text-to-speech reader with PDF support, speed reading, paragraph reading, and word highlighting",
+  "permissions": [
+    "activeTab",
+    "storage",
+    "scripting",
+    "tts",
+    "contextMenus"
+  ],
+  "host_permissions": [
+    "http://*/*",
+    "https://*/*",
+    "file:///*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png",
+      "256": "icons/icon256.png"
+    },
+    "default_title": "🔊 Click to read page instantly | Ctrl+Shift+O for settings"
+  },
+  "options_page": "popup.html",
+  "commands": {
+    "toggle-reading": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+Space",
+        "mac": "Command+Shift+Space"
+      },
+      "description": "Read entire page"
+    },
+    "pause-resume": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+P",
+        "mac": "Command+Shift+P"
+      },
+      "description": "Pause or resume reading"
+    },
+    "stop-reading": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+S",
+        "mac": "Command+Shift+S"
+      },
+      "description": "Stop reading"
+    },
+    "read-selection": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+C",
+        "mac": "Command+Shift+C"
+      },
+      "description": "Read selected text"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*", "file:///*"],
+      "exclude_matches": ["*://*/*.pdf", "file:///*/*.pdf"],
+      "js": [
+        "utils.js",
+        "word-highlighter.js",
+        "license-manager.js",
+        "tts-state-manager.js",
+        "advanced-reading-modes.js",
+        "reading-progress-manager.js",
+        "advanced-vocab-widget.js",
+        "content.js",
+        "paragraph-reader.js"
+      ],
+      "css": ["highlight.css"],
+      "run_at": "document_idle",
+      "all_frames": false
+    },
+    {
+      "matches": ["*://*/*.pdf", "file:///*/*.pdf"],
+      "js": ["pdf-content.js"],
+      "css": ["highlight.css"],
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["word-highlighter.js", "pdf.min.js", "pdfjs-worker.min.js", "pdf-reader.html", "pdf-reader.js", "popup.html", "popup.js", "popup.css"],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png",
+    "256": "icons/icon256.png"
+  }
+}

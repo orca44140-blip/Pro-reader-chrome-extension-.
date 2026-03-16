@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Advanced Pro Text Reader - v2.0</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body class="light-mode">
+  <div class="container">
+    <!-- Header with Dark Mode Toggle -->
+    <div class="header">
+      <div class="header-title">
+        <h1>🔊 Pro Reader</h1>
+        <small class="version-badge">v2.1 Pro</small>
+      </div>
+      <div class="header-controls">
+        <button id="dark-mode-toggle" class="btn-icon-small" title="Toggle Dark Mode">🌙</button>
+        <button id="help-btn" class="btn-icon-small" title="Keyboard Shortcuts">⌨️</button>
+        <div id="offline-indicator" class="status-indicator" title="Extension ready - Click toolbar icon to open">📡 Online</div>
+      </div>
+    </div>
+
+    <!-- Playback Controls -->
+    <div class="playback-panel">
+      <div class="playback-controls-main">
+        <button id="play-btn" class="playback-btn play-btn" title="Play / Pause  [Space]" aria-label="Play">▶</button>
+        <button id="pause-btn" class="playback-btn pause-btn" title="Pause  [Space]" aria-label="Pause">⏸</button>
+        <button id="stop-btn" class="playback-btn stop-btn" title="Stop  [Esc]" aria-label="Stop">⏹</button>
+        <button id="rewind-btn" class="playback-btn rewind-btn" title="Rewind  [←]" aria-label="Rewind">⏮</button>
+        <button id="forward-btn" class="playback-btn forward-btn" title="Forward  [→]" aria-label="Forward">⏭</button>
+        <button id="download-audio-btn" class="playback-btn download-btn" title="Download audio" aria-label="Download">⬇</button>
+      </div>
+      <div class="playback-info">
+        <div class="time-display" title="Elapsed / Total">
+          <span id="current-time">0:00</span><span style="opacity:0.4"> / </span><span id="total-time">0:00</span>
+        </div>
+        <div id="wpm-display" class="wpm-stat" title="Words per minute">0 WPM</div>
+      </div>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="playback-progress">
+      <div id="progress-bar" class="progress-bar" title="Click to seek">
+        <div id="progress-fill" class="progress-fill"></div>
+        <div id="progress-handle" class="progress-handle"></div>
+      </div>
+    </div>
+
+    <!-- Status Bar -->
+    <div class="status-display">
+      <div id="status-text" class="status-text">Click ▶ to read page &nbsp;·&nbsp; Select text, then ✂️</div>
+      <div id="reading-stats" class="reading-stats">
+        <span id="words-read">0</span> words &nbsp;·&nbsp; <span id="reading-time">0:00</span>
+      </div>
+    </div>
+
+    <!-- Instant read hint -->
+    <div style="background:rgba(0,255,170,0.06);border:1px solid rgba(0,255,170,0.18);border-radius:6px;padding:5px 10px;margin:4px 10px;font-size:10.5px;color:#6ab8a0;display:flex;align-items:center;gap:6px;">
+      <span style="font-size:13px;">⚡</span>
+      <span><strong style="color:#00ffaa">Toolbar icon</strong> = instant page read &nbsp;|&nbsp; <strong style="color:#00ffaa">Ctrl+Shift+O</strong> = this panel</span>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="quick-actions">
+      <button id="read-page" class="btn-quick btn-primary" title="Read entire page  [Ctrl+Shift+R]">
+        📄 Read Page
+      </button>
+      <button id="read-selection" class="btn-quick btn-secondary" title="Read selected text  [Ctrl+Shift+S]">
+        ✂️ Selection
+      </button>
+      <button id="extract-content" class="btn-quick btn-accent" title="Extract clean article text">
+        🧹 Clean Read
+      </button>
+    </div>
+
+    <!-- Advanced Settings Tabs -->
+    <div class="tabs-advanced">
+      <button class="tab-btn active" data-tab="voice">🎤 Voice</button>
+      <button class="tab-btn" data-tab="reading">📖 Reading</button>
+      <button class="tab-btn" data-tab="highlight">✨ Highlight</button>
+      <button class="tab-btn" data-tab="advanced">⚙️ Advanced</button>
+      <button class="tab-btn" data-tab="tools">🛠️ Tools</button>
+    </div>
+
+    <!-- Tab Content -->
+    <div class="tab-content-advanced">
+      <!-- Voice Tab -->
+      <div class="tab-pane active" id="voice-tab">
+        <div class="setting-group">
+          <label for="voice-select">🎤 Select Voice:</label>
+          <div class="voice-control">
+            <select id="voice-select" class="select-input">
+              <option value="">Loading voices...</option>
+            </select>
+            <button id="voice-preview-btn" class="btn-icon" title="Preview voice">🔊</button>
+            <button id="voice-best-btn" class="btn-icon" title="Auto-select best offline voice">★</button>
+            <button id="voice-favorite-btn" class="btn-icon" title="Add to favorites">☆</button>
+          </div>
+          <small>📥 = Offline (no external API) | ☁️ = Online | ★★★ = Best quality · Best voice auto-selected</small>
+        </div>
+
+        <div class="setting-group">
+          <label for="speed-select">⚡ Speech Speed:</label>
+          <div class="slider-control">
+            <button class="slider-btn" id="speed-down">−</button>
+            <select id="speed-select" class="select-input">
+              <option value="0.25">0.25x (Very Slow)</option>
+              <option value="0.5">0.5x (Slow)</option>
+              <option value="0.75">0.75x</option>
+              <option value="1" selected>1x (Normal)</option>
+              <option value="1.25">1.25x</option>
+              <option value="1.5">1.5x (Fast)</option>
+              <option value="1.75">1.75x</option>
+              <option value="2">2x (Very Fast)</option>
+              <option value="2.25">2.25x (Fastest)</option>
+            </select>
+            <button class="slider-btn" id="speed-up">+</button>
+          </div>
+        </div>
+
+        <div class="setting-group">
+          <label for="pitch-select">🎵 Voice Pitch:</label>
+          <select id="pitch-select" class="select-input">
+            <option value="0.5">🔻 Very Low</option>
+            <option value="0.75">🔉 Low</option>
+            <option value="1" selected>⏸ Normal</option>
+            <option value="1.25">🔊 High</option>
+            <option value="1.5">🔺 Very High</option>
+          </select>
+        </div>
+
+        <div class="setting-group">
+          <label for="volume-select">🔊 Volume: <span id="volume-value">100%</span></label>
+          <input type="range" id="volume-select" min="0" max="1" step="0.05" value="1" class="slider">
+        </div>
+      </div>
+
+      <!-- Reading Tab -->
+      <div class="tab-pane" id="reading-tab">
+        <div class="setting-group">
+          <label for="sentence-count-select">📝 Sentences per chunk:</label>
+          <select id="sentence-count-select" class="select-input">
+            <option value="1">1 sentence (slower, natural pauses)</option>
+            <option value="2" selected>2 sentences (balanced)</option>
+            <option value="3">3 sentences</option>
+            <option value="4">4 sentences (faster)</option>
+          </select>
+        </div>
+
+        <div class="setting-group">
+          <label for="repeat-count-select">🔁 Repeat sentences:</label>
+          <select id="repeat-count-select" class="select-input">
+            <option value="1" selected>1x (no repeat)</option>
+            <option value="2">2x (better retention)</option>
+            <option value="3">3x</option>
+            <option value="4">4x</option>
+            <option value="5">5x</option>
+          </select>
+          <small>Useful for learning and memorization</small>
+        </div>
+
+        <div class="setting-group">
+          <label for="selection-repeat-select">♾️ Repeat selected text:</label>
+          <select id="selection-repeat-select" class="select-input">
+            <option value="1" selected>1x</option>
+            <option value="2">2x</option>
+            <option value="3">3x</option>
+            <option value="5">5x</option>
+            <option value="unlimited">♾️ Forever</option>
+          </select>
+        </div>
+
+        <div class="checkbox-group">
+          <label>
+            <input type="checkbox" id="auto-scroll-toggle">
+            <span>📜 Auto-scroll to current word</span>
+          </label>
+        </div>
+
+        <div class="checkbox-group">
+          <label>
+            <input type="checkbox" id="click-to-read-toggle">
+            <span>🖱️ Click anywhere to start reading</span>
+          </label>
+        </div>
+
+        <div class="setting-group vocab-widget-setting">
+          <div class="vocab-widget-label">
+            <span class="vocab-widget-icon-wrap">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+              </svg>
+            </span>
+            <div class="vocab-widget-info">
+              <span class="vocab-widget-name">Vocabulary Widget</span>
+              <small>Live definitions as you read</small>
+            </div>
+          </div>
+          <div class="vocab-widget-controls">
+            <button id="launch-vocab-btn" class="vocab-launch-btn" title="Open vocabulary widget on page">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="5 3 19 12 5 21 5 3"/>
+              </svg>
+              Launch
+            </button>
+            <label class="vocab-toggle-switch">
+              <input type="checkbox" id="vocab-toggle" checked>
+              <span class="vocab-toggle-track">
+                <span class="vocab-toggle-thumb"></span>
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+        
+        <!-- Enhanced Loop Settings -->
+        <div class="section-title" style="margin-top: 16px;">🔁 Advanced Loop Settings</div>
+        
+        <div class="setting-group">
+          <label for="loop-intensity-select">🎯 Loop Intensity:</label>
+          <select id="loop-intensity-select" class="select-input">
+            <option value="gentle">🐌 Gentle (3s pause)</option>
+            <option value="normal" selected>⏱️ Normal (auto delay)</option>
+            <option value="intense">⚡ Intense (no pause)</option>
+          </select>
+          <small>Controls pause duration between repeats</small>
+        </div>
+
+        <div class="setting-group">
+          <label for="loop-delay-slider">⏳ Custom delay between repeats:</label>
+          <div class="slider-control">
+            <button class="slider-btn" id="loop-delay-down">−</button>
+            <input type="range" id="loop-delay-slider" min="0" max="10000" step="500" value="0" class="slider">
+            <button class="slider-btn" id="loop-delay-up">+</button>
+          </div>
+          <span id="loop-delay-value">0ms</span>
+        </div>
+
+        <div class="checkbox-group">
+          <label>
+            <input type="checkbox" id="loop-fade-toggle">
+            <span>✨ Fade effect between repeats</span>
+          </label>
+        </div>
+
+        <div class="checkbox-group">
+          <label>
+            <input type="checkbox" id="infinite-loop-toggle">
+            <span>♾️ Infinite loop (ignore repeat count)</span>
+          </label>
+          <small>Keep looping after repeat count is reached</small>
+        </div>
+
+        <div class="info-box" style="margin-top: 12px; background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1)); border-left: 4px solid var(--primary-color);">
+          <strong>💡 Loop Tips:</strong>
+          <ul style="font-size: 11px; line-height: 1.5; margin-top: 6px;">
+            <li><strong>Gentle:</strong> Best for language learning & memorization</li>
+            <li><strong>Normal:</strong> Balanced approach with smart delays</li>
+            <li><strong>Intense:</strong> Continuous practice without pauses</li>
+            <li><strong>Custom Delay:</strong> Fine-tune pause duration</li>
+            <li><strong>Fade Effect:</strong> Smooth visual transition between repeats</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Highlighting Tab (NEW) -->
+      <div class="tab-pane" id="highlight-tab">
+        <div class="setting-group">
+          <label for="highlight-color">🎨 Highlight color:</label>
+          <div class="color-picker">
+            <input type="color" id="highlight-color" value="#00ff00">
+            <select id="highlight-preset">
+              <option value="#00ff00">Neon Green</option>
+              <option value="#ffff00">Bright Yellow</option>
+              <option value="#ff00ff">Magenta</option>
+              <option value="#00ffff">Cyan</option>
+              <option value="#ff6600">Orange</option>
+              <option value="#ff3333">Red</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="setting-group">
+          <label for="highlight-style">✨ Highlight style:</label>
+          <select id="highlight-style" class="select-input">
+            <optgroup label="━━━ Modern & Minimal ━━━">
+              <option value="text-color-only">💬 Text color only (bold)</option>
+              <option value="modern-minimal">✨ Modern minimal (clean)</option>
+              <option value="text-color-minimal">📝 Text color + minimal box</option>
+            </optgroup>
+            <optgroup label="━━━ Classic Styles ━━━">
+              <option value="background" selected>🎨 Background color</option>
+              <option value="outline">⭕ Outline/Border</option>
+              <option value="box-shadow-only">📦 Box shadow only</option>
+            </optgroup>
+            <optgroup label="━━━ Underline Effects ━━━">
+              <option value="underline">➖ Simple underline</option>
+              <option value="wave-underline">〰️ Wave underline</option>
+              <option value="double-underline">═ Double underline</option>
+            </optgroup>
+            <optgroup label="━━━ Glow & Neon ━━━">
+              <option value="glow">✨ Glow effect</option>
+              <option value="neon-glow">💡 Neon glow (bright)</option>
+              <option value="text-shadow">🌟 Text shadow</option>
+            </optgroup>
+            <optgroup label="━━━ Gradient & Color ━━━">
+              <option value="gradient-text">🌈 Gradient text</option>
+              <option value="rainbow">🎨 Rainbow (animated)</option>
+              <option value="color-fade">🎭 Color fade</option>
+              <option value="shimmer">✨ Shimmer wave</option>
+              <option value="spotlight">💡 Spotlight beam</option>
+            </optgroup>
+            <optgroup label="━━━ Animated Effects ━━━">
+              <option value="pulse">💓 Pulse animation</option>
+              <option value="scale">📈 Scale animation</option>
+              <option value="glitch">⚡ Glitch effect</option>
+            </optgroup>
+            <optgroup label="━━━ Special Effects ━━━">
+              <option value="stroke-only">⭕ Stroke outline only</option>
+              <option value="blur-highlight">🌫️ Blur highlight</option>
+              <option value="text-bold-dark">🌙 Bold + dark background</option>
+            </optgroup>
+          </select>
+        </div>
+
+        <div class="setting-group">
+          <label for="highlight-opacity">💫 Highlight opacity:</label>
+          <input type="range" id="highlight-opacity" min="0.3" max="1" step="0.1" value="1" class="slider">
+          <span id="opacity-value">100%</span>
+        </div>
+
+        <div class="checkbox-group">
+          <label>
+            <input type="checkbox" id="sync-highlight-toggle" checked>
+            <span>🔄 Sync highlighting with speech</span>
+          </label>
+          <small>Highlight words as they are spoken</small>
+        </div>
+
+        <div class="checkbox-group">
+          <label>
+            <input type="checkbox" id="sentence-highlight-toggle">
+            <span>📄 Highlight entire sentences</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Advanced Tab -->
+      <div class="tab-pane" id="advanced-tab">
+        <div class="vocab-refresh-card">
+          <div class="vrc-header">
+            <div class="vrc-label-wrap">
+              <span class="vrc-icon">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="23 4 23 10 17 10"/>
+                  <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+                </svg>
+              </span>
+              <div>
+                <div class="vrc-title">Vocab Auto-Refresh</div>
+                <div class="vrc-subtitle">Rotate word every N seconds</div>
+              </div>
+            </div>
+            <button id="vocab-autorefresh-toggle" class="vrc-onoff vrc-on" title="Toggle auto-refresh">
+              <span class="vrc-onoff-dot"></span>
+              <span class="vrc-onoff-label">On</span>
+            </button>
+          </div>
+          <div class="vrc-stepper" id="vocab-refresh-stepper">
+            <button class="vrc-step-btn" id="vocab-delay-dec" title="Decrease by 15s">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+              15s
+            </button>
+            <div class="vrc-display">
+              <span class="vrc-value" id="vocab-delay-value">15</span>
+              <span class="vrc-unit">sec</span>
+            </div>
+            <button class="vrc-step-btn vrc-step-add" id="vocab-delay-inc" title="Increase by 15s">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+              15s
+            </button>
+          </div>
+          <div class="vrc-track-wrap">
+            <input type="range" id="vocab-delay-slider" class="vrc-slider" min="15" max="120" step="15" value="15">
+            <div class="vrc-track-labels">
+              <span>15s</span><span>30s</span><span>45s</span><span>60s</span><span>75s</span><span>90s</span><span>105s</span><span>2m</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="setting-group">
+          <label for="voice-filter">🎯 Filter voices:</label>
+          <select id="voice-filter" class="select-input">
+            <option value="all">All voices</option>
+            <option value="offline">📥 Offline only</option>
+            <option value="online">☁️ Online only</option>
+            <option value="english">🇬🇧 English</option>
+          </select>
+        </div>
+
+        <div class="checkbox-group">
+          <label>
+            <input type="checkbox" id="voice-quality-toggle">
+            <span>🏆 Show voice quality indicators</span>
+          </label>
+        </div>
+
+        <div class="checkbox-group">
+          <label>
+            <input type="checkbox" id="enable-shortcuts-toggle" checked>
+            <span>⌨️ Enable keyboard shortcuts</span>
+          </label>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="info-box">
+          <strong>⌨️ Keyboard Shortcuts:</strong>
+          <ul style="font-size: 11px; line-height: 1.4; margin-top: 8px;">
+            <li><kbd>Space</kbd> - Play/Pause</li>
+            <li><kbd>Esc</kbd> - Stop reading</li>
+            <li><kbd>Ctrl+Shift+R</kbd> - Read page</li>
+            <li><kbd>Ctrl+Shift+S</kbd> - Read selection</li>
+            <li><kbd>Alt+Click</kbd> - Read from cursor position</li>
+            <li><kbd>Ctrl+Shift+Click</kbd> - Alternative click-to-speak</li>
+          </ul>
+        </div>
+        
+        <div class="info-box" style="margin-top: 12px; background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1)); border-left: 4px solid var(--primary-color);">
+          <strong>🖱️ Click to Speak:</strong>
+          <p style="font-size: 11px; margin-top: 6px; line-height: 1.5;">
+            Hold <kbd>Alt</kbd> or <kbd>Ctrl+Shift</kbd> and click anywhere on the page to start reading from that exact position. Perfect for long articles!
+          </p>
+        </div>
+        
+        <div class="info-box" style="margin-top: 12px; background: linear-gradient(135deg, rgba(52, 211, 153, 0.1), rgba(34, 197, 94, 0.1)); border-left: 4px solid #34d399;">
+          <strong>🧭 Browser Toolbar Icon:</strong>
+          <p style="font-size: 11px; margin-top: 6px; line-height: 1.5;">
+            Click the <strong>Pro Reader icon</strong> in your browser's toolbar (top-right) to open this control panel on any webpage. The icon is always available for quick access!
+          </p>
+        </div>
+      </div>
+
+      <!-- Tools Tab (NEW) -->
+      <div class="tab-pane" id="tools-tab">
+        <div class="import-section">
+          <div class="section-title">📁 Import & Extract</div>
+          <div class="import-buttons">
+            <button id="file-upload-btn" class="btn-small" title="Upload TXT, PDF, DOCX, EPUB">📄 Upload</button>
+            <button id="clipboard-btn" class="btn-small" title="Paste from clipboard">📋 Paste</button>
+            <button id="url-import-btn" class="btn-small" title="Import from URL">🔗 URL</button>
+            <button id="refresh-vocab-btn" class="btn-small" title="Refresh definitions">🔄 Refresh</button>
+          </div>
+          <div id="file-drop-zone" class="drop-zone">
+            <div>📥 Drop files here or click to browse</div>
+            <small>📄 PDF → opens full reader tab &nbsp;|&nbsp; TXT / DOCX / EPUB → reads inline</small>
+          </div>
+          <input type="file" id="file-input" style="display: none;" accept=".txt,.pdf,.docx,.epub" multiple>
+          <div id="import-status"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Help Modal (Keyboard Shortcuts) -->
+    <div id="help-modal" class="modal" style="display: none;">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>⌨️ Keyboard Shortcuts</h2>
+          <button id="close-help" class="btn-close">&times;</button>
+        </div>
+        <div class="modal-body">
+          <table class="shortcuts-table">
+            <tr><td><kbd>Space</kbd></td><td>Play / Pause reading</td></tr>
+            <tr><td><kbd>Esc</kbd></td><td>Stop reading completely</td></tr>
+            <tr><td><kbd>→</kbd></td><td>Forward 5 seconds</td></tr>
+            <tr><td><kbd>←</kbd></td><td>Rewind 5 seconds</td></tr>
+            <tr><td><kbd>Ctrl+Shift+R</kbd></td><td>Read entire page</td></tr>
+            <tr><td><kbd>Ctrl+Shift+S</kbd></td><td>Read selected text</td></tr>
+            <tr><td><kbd>+</kbd></td><td>Increase speech speed</td></tr>
+            <tr><td><kbd>−</kbd></td><td>Decrease speech speed</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <div class="features-grid">
+        <div class="feature-item">✓ Real-time Word Highlighting</div>
+        <div class="feature-item">✓ Multi-format Support (PDF, DOCX, EPUB)</div>
+        <div class="feature-item">✓ Offline & Online Voices</div>
+        <div class="feature-item">✓ Advanced Word Extraction</div>
+        <div class="feature-item">✓ Learning Modes & Repetition</div>
+        <div class="feature-item">✓ Dark Mode Support</div>
+      </div>
+      <div class="footer-credit">
+        <small>Advanced Pro Text Reader v2.0 | Professional Edition</small>
+      </div>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

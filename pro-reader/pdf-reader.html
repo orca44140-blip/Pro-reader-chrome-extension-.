@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PDF Reader — Pro Reader</title>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --primary: #00ffaa;
+      --primary-dim: #00cc88;
+      --primary-muted: #00aa77;
+      --bg: #050f0f;
+      --bg2: #071414;
+      --bg3: #0d1f1f;
+      --bg4: #112525;
+      --text: #d0fff2;
+      --text-dim: #6ab8a0;
+      --border: rgba(0,255,170,0.14);
+      --border-bright: rgba(0,255,170,0.35);
+      --danger: #ff4d4d;
+      --highlight-bg: #ffd700;
+      --highlight-text: #000;
+      --highlight-glow: 0 0 14px rgba(255,215,0,0.7);
+      --glow-sm: 0 0 12px rgba(0,255,170,0.3);
+      --glow-md: 0 0 24px rgba(0,255,170,0.5);
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --transition: all 0.18s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Inter', Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ===== CONTROL BAR ===== */
+    #control-bar {
+      flex-shrink: 0;
+      background: linear-gradient(180deg, var(--bg2) 0%, var(--bg) 100%);
+      border-bottom: 1px solid var(--border-bright);
+      box-shadow: 0 2px 20px rgba(0,0,0,0.6), 0 0 30px rgba(0,255,170,0.08);
+      padding: 10px 18px 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 100;
+      position: relative;
+    }
+
+    #control-bar::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--primary-dim), transparent);
+      opacity: 0.5;
+    }
+
+    /* Top row: title + controls */
+    #top-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    #pdf-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--primary);
+      text-shadow: var(--glow-sm);
+      flex: 1;
+      min-width: 100px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 260px;
+      letter-spacing: 0.2px;
+    }
+
+    #controls-group {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+
+    /* Buttons */
+    .ctrl-btn {
+      background: var(--bg3);
+      border: 1.5px solid var(--border-bright);
+      color: var(--primary);
+      border-radius: var(--radius-sm);
+      padding: 6px 14px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+      line-height: 1.3;
+    }
+
+    .ctrl-btn:hover {
+      background: rgba(0,255,170,0.1);
+      border-color: var(--primary);
+      box-shadow: var(--glow-sm);
+      transform: translateY(-1px);
+    }
+
+    .ctrl-btn:active { transform: translateY(0) scale(0.97); }
+
+    .play-btn {
+      background: linear-gradient(135deg, #00ffaa, #00cc88);
+      color: #000;
+      border-color: transparent;
+      padding: 6px 18px;
+      font-size: 14px;
+      box-shadow: 0 2px 10px rgba(0,255,170,0.4);
+    }
+
+    .play-btn:hover {
+      background: linear-gradient(135deg, #00ffcc, #00ffaa);
+      box-shadow: var(--glow-md) !important;
+      border-color: transparent !important;
+      color: #000;
+    }
+
+    .stop-btn { border-color: rgba(255,77,77,0.3); color: var(--danger); }
+    .stop-btn:hover { border-color: var(--danger) !important; box-shadow: 0 0 14px rgba(255,77,77,0.4) !important; }
+
+    /* Selects */
+    .ctrl-select {
+      background: var(--bg3);
+      border: 1.5px solid var(--border);
+      color: var(--text);
+      border-radius: var(--radius-sm);
+      padding: 6px 10px;
+      font-size: 11.5px;
+      cursor: pointer;
+      outline: none;
+      transition: var(--transition);
+      max-width: 150px;
+      font-family: inherit;
+    }
+
+    .ctrl-select:hover, .ctrl-select:focus { border-color: var(--primary); }
+    .ctrl-select option { background: var(--bg2); }
+
+    .ctrl-color {
+      width: 32px;
+      height: 32px;
+      padding: 2px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--bg3);
+      cursor: pointer;
+      outline: none;
+      transition: var(--transition);
+      flex-shrink: 0;
+    }
+    .ctrl-color:hover { border-color: var(--primary); }
+
+    /* WPM badge */
+    #wpm-display {
+      font-size: 12px;
+      font-weight: 800;
+      padding: 5px 13px;
+      border-radius: 20px;
+      background: rgba(0,255,170,0.07);
+      border: 1.5px solid var(--border-bright);
+      color: var(--primary);
+      letter-spacing: 0.5px;
+      transition: var(--transition);
+      white-space: nowrap;
+    }
+
+    #wpm-display.wpm-slow  { color: #ffaa00; border-color: rgba(255,170,0,0.35); background: rgba(255,170,0,0.07); }
+    #wpm-display.wpm-normal { color: var(--primary); }
+    #wpm-display.wpm-fast  { color: #00ffff; border-color: rgba(0,255,255,0.35); background: rgba(0,255,255,0.07); text-shadow: 0 0 10px rgba(0,255,255,0.5); }
+
+    /* ===== STATS ROW ===== */
+    #stats-row {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+
+    .stat-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .stat-value {
+      font-weight: 700;
+      color: var(--primary);
+      font-size: 12px;
+    }
+
+    /* ===== PROGRESS BAR ===== */
+    #progress-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    #progress-track {
+      flex: 1;
+      height: 4px;
+      background: var(--bg4);
+      border-radius: 10px;
+      overflow: visible;
+      cursor: pointer;
+      position: relative;
+      border: 1px solid var(--border);
+      transition: height 0.2s;
+    }
+
+    #progress-track:hover { height: 6px; }
+
+    #progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--primary-dim), var(--primary));
+      border-radius: 10px;
+      box-shadow: 0 0 8px rgba(0,255,170,0.5);
+      transition: width 0.4s ease;
+      position: relative;
+    }
+
+    #progress-fill::after {
+      content: '';
+      position: absolute;
+      right: -5px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 10px;
+      height: 10px;
+      background: var(--primary);
+      border: 2px solid var(--bg);
+      border-radius: 50%;
+      box-shadow: 0 0 8px rgba(0,255,170,0.8);
+      transition: transform 0.2s;
+    }
+
+    #progress-track:hover #progress-fill::after {
+      transform: translateY(-50%) scale(1.4);
+    }
+
+    #progress-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-dim);
+      white-space: nowrap;
+      min-width: 38px;
+      text-align: right;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+    }
+
+    /* ===== TEXT CONTAINER ===== */
+    #text-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 40px 60px;
+      background: var(--bg);
+      scrollbar-width: thin;
+      scrollbar-color: var(--primary-muted) var(--bg2);
+    }
+
+    #text-container::-webkit-scrollbar { width: 7px; }
+    #text-container::-webkit-scrollbar-track { background: var(--bg2); }
+    #text-container::-webkit-scrollbar-thumb { background: var(--primary-muted); border-radius: 10px; }
+    #text-container::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+    /* Inner content wrapper */
+    #text-content {
+      max-width: 780px;
+      margin: 0 auto;
+    }
+
+    /* Page markers */
+    .page-marker {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 32px 0 20px;
+      font-size: 10.5px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      opacity: 0.55;
+    }
+
+    .page-marker:first-child { margin-top: 0; }
+
+    .page-marker::before,
+    .page-marker::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border-bright), transparent);
+    }
+
+    /* Paragraphs */
+    .text-paragraph {
+      margin-bottom: 22px;
+      font-size: 18px;
+      line-height: 2;
+      color: var(--text);
+      letter-spacing: 0.01em;
+    }
+
+    /* Word spans */
+    .word-span {
+      display: inline;
+      cursor: pointer;
+      border-radius: 3px;
+      transition: background 0.1s, color 0.1s;
+      padding: 1px 2px;
+    }
+
+    .word-span:hover {
+      background: rgba(0,255,170,0.1);
+      color: var(--primary);
+    }
+
+    /* Current word highlight */
+    .word-highlight {
+      background: var(--highlight-text) !important;
+      color: var(--highlight-bg) !important;
+      /* font-weight: 700; */
+      padding: 2px 5px !important;
+      border-radius: 4px;
+      /* box-shadow: var(--highlight-glow); */
+      animation: wordPop 0.14s cubic-bezier(0.34,1.56,0.64,1);
+    }
+
+    @keyframes wordPop {
+      0%   { transform: scale(0.88); opacity: 0.6; }
+      65%  { transform: scale(1.07); }
+      100% { transform: scale(1);    opacity: 1; }
+    }
+
+    /* Upcoming words */
+    .word-upcoming {
+      background: rgba(255,215,0,0.12);
+      border-radius: 3px;
+    }
+
+    /* ===== LOADING OVERLAY ===== */
+    #loading-overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      z-index: 999;
+    }
+
+    .loading-ring {
+      width: 52px;
+      height: 52px;
+      position: relative;
+    }
+
+    .loading-ring::before,
+    .loading-ring::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 3px solid transparent;
+    }
+
+    .loading-ring::before {
+      border-top-color: var(--primary);
+      animation: spin 0.8s linear infinite;
+    }
+
+    .loading-ring::after {
+      border-bottom-color: rgba(0,255,170,0.25);
+      animation: spin 1.6s linear infinite reverse;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .loading-text {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--primary);
+      text-shadow: var(--glow-sm);
+    }
+
+    .loading-sub {
+      font-size: 12px;
+      color: var(--text-dim);
+      max-width: 320px;
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    /* ===== ERROR BOX ===== */
+    /* #error-box {
+      display: none;
+      padding: 24px;
+      margin: 40px auto;
+      max-width: 520px;
+      background: rgba(255,77,77,0.07);
+      border: 1.5px solid rgba(255,77,77,0.3);
+      border-radius: var(--radius-md);
+      color: #ff8080;
+      text-align: center;
+      font-size: 13.5px;
+      line-height: 1.6;
+    } */
+
+    #error-box strong {
+      display: block;
+      font-size: 15px;
+      margin-bottom: 8px;
+      color: var(--danger);
+    }
+
+    /* ===== EMPTY STATE ===== */
+    #empty-state {
+      display: none;
+      text-align: center;
+      padding: 80px 24px;
+      color: var(--text-dim);
+    }
+
+    #empty-state .icon {
+      font-size: 64px;
+      margin-bottom: 16px;
+      filter: grayscale(0.3);
+    }
+
+    #empty-state p {
+      font-size: 15px;
+      line-height: 1.7;
+      max-width: 340px;
+      margin: 0 auto;
+    }
+
+    #empty-state p strong { color: var(--primary); }
+
+    /* ===== FONT SIZE CONTROL ===== */
+    #font-btn {
+      font-size: 12px;
+      padding: 5px 10px;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 700px) {
+      #text-container { padding: 20px 22px; }
+      .text-paragraph { font-size: 16px; line-height: 1.8; }
+      #top-row { flex-direction: column; align-items: flex-start; }
+      #pdf-title { max-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Loading overlay -->
+  <div id="loading-overlay">
+    <div class="loading-ring"></div>
+    <div class="loading-text">Loading PDF…</div>
+    <div class="loading-sub" id="loading-detail">Extracting text, please wait…</div>
+  </div>
+
+  <!-- Control bar -->
+  <div id="control-bar">
+
+    <!-- Row 1: Title + Playback -->
+    <div id="top-row">
+      <div id="pdf-title">📄 PDF Reader</div>
+      <div id="controls-group">
+        <button class="ctrl-btn play-btn" id="play-btn">▶ Play</button>
+        <button class="ctrl-btn stop-btn" id="stop-btn" title="Stop">⏹</button>
+        <button class="ctrl-btn" id="prev-btn" title="Back 30 words">⏮ ‑30</button>
+        <button class="ctrl-btn" id="next-btn" title="Skip 30 words">+30 ⏭</button>
+        <button class="ctrl-btn" id="font-btn" title="Cycle font size">Aa</button>
+        <select class="ctrl-select" id="speed-select" title="Speed">
+          <option value="0.5">0.5× Slow</option>
+          <option value="0.75">0.75×</option>
+          <option value="1" selected>1× Normal</option>
+          <option value="1.25">1.25×</option>
+          <option value="1.5">1.5×</option>
+          <option value="1.75">1.75×</option>
+          <option value="2">2× Fast</option>
+          <option value="2.5">2.5× Max</option>
+        </select>
+        <select class="ctrl-select" id="voice-select" title="Voice"></select>
+        <select class="ctrl-select" id="highlight-style-select" title="Highlight Style">
+          <option value="background">Background</option>
+          <option value="text-color-only">Text color only</option>
+          <option value="text-color-minimal">Text + minimal box</option>
+          <option value="text-shadow">Text shadow</option>
+          <option value="text-bold-dark">Bold + dark</option>
+          <option value="outline">Outline</option>
+          <option value="underline">Underline</option>
+          <option value="wave-underline">Wave underline</option>
+          <option value="box-shadow-only">Box shadow</option>
+          <option value="gradient-text">Gradient text</option>
+          <option value="glow">Glow</option>
+          <option value="pulse">Pulse</option>
+          <option value="scale">Scale</option>
+        </select>
+        <input type="color" id="highlight-color-input" class="ctrl-color" value="#ffd700" title="Highlight color">
+        <div id="wpm-display" class="wpm-normal">0 WPM</div>
+      </div>
+    </div>
+
+    <!-- Row 2: Stats -->
+    <div id="stats-row">
+      <div class="stat-item">
+        📖 <span class="stat-value" id="words-read-stat">0</span>&thinsp;/&thinsp;<span id="total-words-stat">0</span> words
+      </div>
+      <div class="stat-item">
+        ⏱ <span class="stat-value" id="time-stat">0:00</span>
+      </div>
+      <div class="stat-item">
+        📑 Page <span class="stat-value" id="current-page-stat">–</span>
+      </div>
+    </div>
+
+    <!-- Row 3: Progress -->
+    <div id="progress-row">
+      <div id="progress-track" title="Click to seek">
+        <div id="progress-fill"></div>
+      </div>
+      <div id="progress-label">0%</div>
+    </div>
+
+  </div>
+
+  <!-- Main text area -->
+  <div id="text-container">
+    <div id="text-content">
+      <div id="error-box"></div>
+      <div id="empty-state">
+        <div class="icon">📭</div>
+        <p>No PDF found. Upload one from the <strong>Pro Reader</strong> extension popup — it will open here automatically.</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="pdf.min.js"></script>
+  <script src="pdf-reader.js"></script>
+</body>
+</html>

@@ -1,0 +1,402 @@
+/* ===== ADVANCED TEXT READER - Enhanced Highlighting & Styles ===== */
+
+/* ===== CORE WORD HIGHLIGHTING ===== */
+.tts-word-span {
+  position: relative;
+  display: inline;
+  transition: all 0.1s ease;
+  cursor: pointer;
+}
+
+.tts-word-highlight {
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 5px;
+}
+
+/* ===== SENTENCE & PARAGRAPH HIGHLIGHTING ===== */
+.pro-reader-highlight {
+  background-color: #FFD700 !important;
+  color: #000000 !important;
+  font-weight: bold;
+  padding: 2px 4px;
+  border-radius: 2px;
+  transition: background-color 0.1s ease;
+}
+
+.pro-reader-sentence-highlight {
+  background-color: rgba(79, 70, 229, 0.15) !important;
+  border-left: 3px solid #4F46E5;
+  padding: 4px 6px;
+  border-radius: 4px;
+}
+
+.pro-reader-paragraph-highlight {
+  background-color: rgba(79, 70, 229, 0.08) !important;
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin-bottom: 4px;
+}
+
+/* ===== READING MODE OVERLAYS ===== */
+.tts-rsvp-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  z-index: 999999998;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  animation: fadeIn 0.3s ease;
+  backdrop-filter: blur(5px);
+}
+
+.tts-focus-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.75);
+  z-index: 999999997;
+  pointer-events: none;
+  animation: fadeIn 0.4s ease;
+  backdrop-filter: blur(3px);
+}
+
+/* ===== FLOATING PLAYER STYLES ===== */
+#tts-floating-player {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 380px;
+  background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(79, 70, 229, 0.1);
+  z-index: 999999;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  color: #1f2937;
+  animation: slideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  backdrop-filter: blur(10px);
+}
+
+#tts-floating-player.dark-mode {
+  background: linear-gradient(145deg, #2a2a3e 0%, #1a1a2e 100%);
+  color: #e5e7eb;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(79, 70, 229, 0.2);
+}
+
+/* ===== PDF INDICATOR STYLES ===== */
+#tts-pdf-indicator {
+  animation: slideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+}
+
+#tts-pdf-indicator.dark-mode {
+  background: linear-gradient(135deg, #1a1a1e 0%, #0f0f13 100%) !important;
+  color: #e0e0e0 !important;
+}
+
+#pdf-progress-bar {
+  background: linear-gradient(90deg, rgba(79, 70, 229, 0.1), rgba(124, 58, 237, 0.1));
+  border-radius: 3px;
+}
+
+#pdf-progress-fill {
+  background: linear-gradient(90deg, #4F46E5, #7C3AED) !important;
+  box-shadow: 0 0 15px rgba(79, 70, 229, 0.4);
+}
+
+/* ===== BUTTON STYLES ===== */
+.player-btn, [id*="pdf-"][id$="-btn"] {
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.player-btn:hover, [id*="pdf-"][id$="-btn"]:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(79, 70, 229, 0.3);
+}
+
+.player-btn:active, [id*="pdf-"][id$="-btn"]:active {
+  transform: translateY(0);
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes highlightPulse {
+  0%   { transform: scale(0.75); opacity: 0.3; }
+  60%  { transform: scale(1.07); }
+  100% { transform: scale(1);    opacity: 1;   }
+}
+
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-100px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* ===== DARK MODE SUPPORT ===== */
+@media (prefers-color-scheme: dark) {
+  .tts-word-span {
+    background-color: transparent;
+  }
+  
+  .tts-word-highlight {
+    color: #1a1a1a !important;
+  }
+  
+  #tts-floating-player {
+    background: linear-gradient(145deg, #2a2a3e 0%, #1a1a2e 100%);
+    color: #e5e7eb;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(79, 70, 229, 0.2);
+  }
+}
+
+/* ===== ACCESSIBILITY ===== */
+@media (prefers-reduced-motion: reduce) {
+  .tts-word-highlight,
+  .player-btn,
+  [id*="pdf-"][id$="-btn"],
+  #tts-floating-player,
+  #tts-pdf-indicator {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 480px) {
+  #tts-floating-player,
+  #tts-pdf-indicator {
+    width: 90% !important;
+    bottom: 10px !important;
+    right: 5% !important;
+    left: 5% !important;
+  }
+  
+  .player-btn {
+    font-size: 11px !important;
+    padding: 6px !important;
+  }
+}
+
+/* ===== COMPATIBILITY ===== */
+.pro-reader-highlight::selection {
+  background-color: #FFA500;
+  color: #000000;
+}
+
+.pro-reader-sentence-highlight,
+.pro-reader-paragraph-highlight {
+  z-index: 9998;
+  position: relative;
+}
+
+.pro-reader-highlight.pulse {
+  animation: highlightPulse 0.6s ease-out;
+}
+
+/* Print styles - hide highlights when printing */
+@media print {
+  .pro-reader-highlight,
+  .pro-reader-sentence-highlight,
+  .pro-reader-paragraph-highlight {
+    background-color: transparent !important;
+    color: inherit !important;
+  }
+}
+
+/* ===== WPM REGEX MATCHED WORD HIGHLIGHT ===== */
+/* Structure only — color and animation applied via inline style by JS */
+.tts-word-highlight {
+  font-weight: 700 !important;
+  padding: 1px 6px !important;
+  border-radius: 5px !important;
+  display: inline !important;
+  visibility: visible !important;
+  position: relative;
+  z-index: 1;
+  will-change: transform, opacity;
+}
+
+/* ===== HIGHLIGHT STYLE VARIANTS ===== */
+.tts-word-highlight-outline {
+  border-radius: 5px !important;
+  display: inline !important;
+}
+
+.tts-word-highlight-underline {
+  display: inline !important;
+}
+
+.tts-word-highlight-glow {
+  display: inline !important;
+}
+
+.tts-word-highlight-scale {
+  border-radius: 5px !important;
+  display: inline-block !important;
+}
+
+.tts-word-highlight-pulse {
+  border-radius: 5px !important;
+  display: inline !important;
+}
+
+@keyframes wpmHighlightPop {
+  0%   { transform: scale(0.75); opacity: 0.3; }
+  60%  { transform: scale(1.07); }
+  100% { transform: scale(1);    opacity: 1;   }
+}
+
+/* Upcoming word lookahead highlight — subtle */
+.tts-word-upcoming {
+  background: rgba(255, 215, 0, 0.12) !important;
+  border-radius: 4px;
+  opacity: 0.7;
+}
+
+/* WPM rate display badge in floating player */
+#player-wpm {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 14px;
+  background: rgba(79, 70, 229, 0.15);
+  border: 1px solid rgba(79, 70, 229, 0.3);
+  color: #4F46E5;
+  transition: all 0.3s ease;
+  letter-spacing: 0.2px;
+}
+
+/* Color WPM based on reading speed */
+#player-wpm[data-speed="slow"] { color: #f59e0b; border-color: rgba(245,158,11,0.3); background: rgba(245,158,11,0.1); }
+#player-wpm[data-speed="normal"] { color: #4F46E5; }
+#player-wpm[data-speed="fast"] { color: #06b6d4; border-color: rgba(6,182,212,0.3); background: rgba(6,182,212,0.1); }
+
+/* ===== PARAGRAPH READING SYSTEM v2 =====
+   Floating UI elements are styled inline by paragraph-reader.js.
+   These classes are only kept for backwards compatibility.
+   =========================================== */
+
+/* Visual feedback when reading a paragraph */
+.paragraph-reading {
+  background-color: rgba(0, 255, 170, 0.06) !important;
+  border-left: 3px solid rgba(0, 255, 170, 0.5) !important;
+  padding-left: 10px !important;
+  transition: background-color 0.4s ease, border-left 0.4s ease !important;
+}
+
+/* Hover glow on detected paragraphs (subtle) */
+[data-tts-para-id]:hover {
+  background-color: rgba(220, 38, 38, 0.03) !important;
+  transition: background-color 0.2s ease !important;
+}
+
+/* ===== PDF READER HIGHLIGHT ANIMATIONS (fallback — JS injects dynamic versions) ===== */
+@keyframes pdf-entry {
+  0%   { transform: scale(0.75); opacity: 0.3; }
+  60%  { transform: scale(1.07); }
+  100% { transform: scale(1);    opacity: 1;   }
+}
+
+@keyframes pdf-bg-sweep {
+  0%   { background-position:  200% center; }
+  100% { background-position: -200% center; }
+}
+
+@keyframes pdf-outline-breathe {
+  0%, 100% { box-shadow: 0 0 0 2px var(--pdf-c1, rgba(255,215,0,1)), 0 0 10px var(--pdf-c2, rgba(255,215,0,0.65)), 0 0 22px var(--pdf-c3, rgba(255,215,0,0.35)); }
+  50%       { box-shadow: 0 0 0 2.5px var(--pdf-c1, rgba(255,215,0,1)), 0 0 18px var(--pdf-c1, rgba(255,215,0,1)), 0 0 38px var(--pdf-c2, rgba(255,215,0,0.65)); }
+}
+
+@keyframes pdf-glow-breathe {
+  0%, 100% { filter: brightness(1.08) drop-shadow(0 0 3px rgba(255,215,0,0.65)); }
+  50%       { filter: brightness(1.18) drop-shadow(0 0 7px rgba(255,215,0,1)); }
+}
+
+@keyframes pdf-pulse-beat {
+  0%, 100% { transform: scale(1);    filter: brightness(1);    }
+  40%       { transform: scale(1.08); filter: brightness(1.12); }
+  60%       { transform: scale(1.04); filter: brightness(1.06); }
+}
+
+@keyframes pdf-float {
+  0%, 100% { transform: translateY(0)    scale(1);    }
+  50%       { transform: translateY(-2px) scale(1.05); }
+}
+
+@keyframes highlightPulse {
+  0%   { transform: scale(0.75); opacity: 0.3; }
+  60%  { transform: scale(1.07); }
+  100% { transform: scale(1);    opacity: 1;   }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-tts-para-id]:hover,
+  .paragraph-reading {
+    transition: none !important;
+  }
+  
+  [class*="tts-highlight"] {
+    animation: none !important;
+    transform: none !important;
+    filter: none !important;
+  }
+}
+

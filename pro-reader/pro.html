@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pro Reader - Upgrade to Pro</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, #D97706 0%, #B45309 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      max-width: 900px;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #D97706 0%, #B45309 100%);
+      color: white;
+      padding: 40px 30px;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 36px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .header p {
+      font-size: 18px;
+      opacity: 0.95;
+    }
+
+    .content {
+      padding: 40px 30px;
+    }
+
+    .pricing-card {
+      border: 3px solid #D97706;
+      border-radius: 16px;
+      padding: 30px;
+      text-align: center;
+      margin-bottom: 30px;
+      background: linear-gradient(135deg, rgba(217, 119, 6, 0.05) 0%, rgba(180, 83, 9, 0.05) 100%);
+    }
+
+    .price {
+      font-size: 48px;
+      font-weight: 700;
+      color: #D97706;
+      margin: 20px 0;
+    }
+
+    .price-label {
+      font-size: 16px;
+      color: #718096;
+      margin-bottom: 20px;
+    }
+
+    .buy-btn {
+      background: linear-gradient(135deg, #D97706 0%, #B45309 100%);
+      color: white;
+      border: none;
+      padding: 16px 40px;
+      border-radius: 12px;
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 4px 15px rgba(217, 119, 6, 0.4);
+    }
+
+    .buy-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin-top: 30px;
+    }
+
+    .feature-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 15px;
+      background: rgba(102, 126, 234, 0.05);
+      border-radius: 10px;
+      transition: all 0.3s;
+    }
+
+    .feature-item:hover {
+      background: rgba(102, 126, 234, 0.1);
+      transform: translateX(5px);
+    }
+
+    .feature-icon {
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+
+    .feature-text {
+      flex: 1;
+    }
+
+    .feature-text h3 {
+      font-size: 16px;
+      color: #2d3748;
+      margin-bottom: 4px;
+    }
+
+    .feature-text p {
+      font-size: 14px;
+      color: #718096;
+      line-height: 1.5;
+    }
+
+    .guarantee {
+      background: #f7fafc;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      margin-top: 30px;
+    }
+
+    .guarantee h3 {
+      color: #2d3748;
+      margin-bottom: 10px;
+    }
+
+    .guarantee p {
+      color: #718096;
+      font-size: 14px;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #48bb78;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-left: 10px;
+    }
+
+    #license-status {
+      text-align: center;
+      padding: 20px;
+      background: #e6fffa;
+      border: 2px solid #38b2ac;
+      border-radius: 12px;
+      margin: 20px 0;
+      display: none;
+    }
+
+    #license-status.active {
+      display: block;
+    }
+
+    #license-status h2 {
+      color: #234e52;
+      margin-bottom: 10px;
+    }
+
+    @media (max-width: 768px) {
+      .header h1 {
+        font-size: 28px;
+      }
+
+      .features {
+        grid-template-columns: 1fr;
+      }
+
+      .price {
+        font-size: 36px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🎯 Pro Reader - Premium Edition</h1>
+      <p>Unlock the full potential of your reading experience</p>
+    </div>
+
+    <div class="content">
+      <!-- License Status (shown when user has license) -->
+      <div id="license-status">
+        <h2>✅ You have Pro Reader Premium!</h2>
+        <p>Thank you for your support. Enjoy all premium features.</p>
+      </div>
+
+      <!-- Pricing -->
+      <div class="pricing-card">
+        <h2>One-Time Purchase<span class="badge">LIFETIME ACCESS</span></h2>
+        <div class="price">$4.99</div>
+        <div class="price-label">Pay once, use forever</div>
+        <button id="buy-btn" class="buy-btn">🚀 Upgrade to Pro Now</button>
+      </div>
+
+      <!-- Features -->
+      <h2 style="margin-bottom: 20px; text-align: center; color: #2d3748;">Premium Features Included</h2>
+      
+      <div class="features">
+        <div class="feature-item">
+          <div class="feature-icon">🚀</div>
+          <div class="feature-text">
+            <h3>RSVP Speed Reading Mode</h3>
+            <p>Read faster with one word at a time display with optimal recognition point highlighting</p>
+          </div>
+        </div>
+
+        <div class="feature-item">
+          <div class="feature-icon">🎯</div>
+          <div class="feature-text">
+            <h3>Focus Mode</h3>
+            <p>Dim everything except current sentence for distraction-free reading</p>
+          </div>
+        </div>
+
+        <div class="feature-item">
+          <div class="feature-icon">📚</div>
+          <div class="feature-text">
+            <h3>Advanced Vocabulary Widget</h3>
+            <p>Interactive dictionary with search, favorites, pronunciation, and API integration</p>
+          </div>
+        </div>
+
+        <div class="feature-item">
+          <div class="feature-icon">💾</div>
+          <div class="feature-text">
+            <h3>Reading Progress Persistence</h3>
+            <p>Resume reading from where you left off on any page</p>
+          </div>
+        </div>
+
+        <div class="feature-item">
+          <div class="feature-icon">🎨</div>
+          <div class="feature-text">
+            <h3>Advanced Highlighting</h3>
+            <p>Multiple styles: background, outline, underline, glow with custom colors</p>
+          </div>
+        </div>
+
+        <div class="feature-item">
+          <div class="feature-icon">⚡</div>
+          <div class="feature-text">
+            <h3>Enhanced Animations</h3>
+            <p>Smooth transitions, scale effects, and visibility protection</p>
+          </div>
+        </div>
+
+        <div class="feature-item">
+          <div class="feature-icon">⌨️</div>
+          <div class="feature-text">
+            <h3>Advanced Keyboard Shortcuts</h3>
+            <p>F for Focus mode, R for Speed mode, Ctrl+S to save progress</p>
+          </div>
+        </div>
+
+        <div class="feature-item">
+          <div class="feature-icon">🔍</div>
+          <div class="feature-text">
+            <h3>Smart Search & Autocomplete</h3>
+            <p>Look up any word instantly with dictionary API integration</p>
+          </div>
+        </div>
+
+        <div class="feature-item">
+          <div class="feature-icon">⭐</div>
+          <div class="feature-text">
+            <h3>Favorites & History</h3>
+            <p>Save favorite words and track search history (100 items)</p>
+          </div>
+        </div>
+
+        <div class="feature-item">
+          <div class="feature-icon">🎤</div>
+          <div class="feature-text">
+            <h3>Text-to-Speech for Vocab</h3>
+            <p>Hear pronunciation of any word with one click</p>
+          </div>
+        </div>
+
+        <div class="feature-item">
+          <div class="feature-icon">🖱️</div>
+          <div class="feature-text">
+            <h3>Draggable Widget</h3>
+            <p>Position vocab widget anywhere with persistent positioning</p>
+          </div>
+        </div>
+
+        <div class="feature-item">
+          <div class="feature-icon">🛡️</div>
+          <div class="feature-text">
+            <h3>Visibility Guardian</h3>
+            <p>Advanced protection prevents text from disappearing during reading</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Guarantee -->
+      <div class="guarantee">
+        <h3>💯 Satisfaction Guaranteed</h3>
+        <p>If you're not completely satisfied with Pro Reader Premium, contact us within 30 days for a full refund. No questions asked.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ExtPay Integration -->
+  <script src="https://extensionpay.com/js/extpay.js"></script>
+  <script>
+    // Initialize ExtPay
+    const extpay = ExtPay('pro-reader-smart-reader');
+    
+    // Check if user already has license
+    extpay.getUser().then(user => {
+      if (user.paid) {
+        document.getElementById('license-status').classList.add('active');
+        document.querySelector('.pricing-card').style.display = 'none';
+      }
+    });
+
+    // Handle purchase button
+    document.getElementById('buy-btn').addEventListener('click', () => {
+      extpay.openPaymentPage();
+    });
+
+    // Listen for license changes
+    extpay.onPaid.addListener(user => {
+      console.log('User purchased Pro!', user);
+      document.getElementById('license-status').classList.add('active');
+      document.querySelector('.pricing-card').style.display = 'none';
+      
+      // Notify background script
+      chrome.runtime.sendMessage({ 
+        action: 'licenseChanged', 
+        isPaid: true 
+      });
+      
+      // Show success message
+      alert('🎉 Thank you for upgrading to Pro! All premium features are now unlocked.');
+    });
+  </script>
+</body>
+</html>
